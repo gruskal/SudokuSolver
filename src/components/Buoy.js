@@ -4,6 +4,7 @@ import styled from "styled-components"
 const TextWrapper = styled.div`
     text-align: center;
     margin: auto;
+    user-select: none;
 `;
 
 const Indicator = styled.div`
@@ -12,7 +13,7 @@ const Indicator = styled.div`
     color: #2D2D2D;
     width: 75px;
     height: 75px;
-    margin: auto auto 30px auto;
+    margin: auto auto 38px auto;
     border-radius: 50%;
     cursor: pointer;
     ${({stage}) => {

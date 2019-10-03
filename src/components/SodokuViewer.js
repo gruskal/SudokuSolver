@@ -11,6 +11,11 @@ import {
 	CircleButton
 } from "./";
 
+const CancelButton = styled(CircleButton)`
+	background-color: #B22020;
+	margin: auto auto 30px auto;
+`;
+
 const StyledHeader = styled(Header)`
 	background-color: ${({error, complete}) => (
 		complete ? 
@@ -37,61 +42,102 @@ const Container = styled.div`
 	background-color: #222222;
 `;
 
-export default function SodokuViewer({
+function SodokuViewer({
 	sodokuPlayer,
+	initialBoard,
 	error
 }) {
-	const [status, setStatus] = useState(error || "Click on a solve option to begin");
+	const DEFAULTSTATUS = "Click on a solve option to begin";
+	const [sodokuRunner, setSodokuRunner] = useState();
+	const [status, setStatus] = useState(error || DEFAULTSTATUS);
 	const [rows, setRows] = useState(sodokuPlayer.getRows());
-	
-  const solveNextSodokuStep = () => {
-	const {
-	  status,
-	  rows
-	} = sodokuPlayer.solve()
-	setStatus(status)
-	setRows(rows);
-  }
-  const quickSolveSodoku = () => {
-	const {
-	  status,
-	  rows
-	} = sodokuPlayer.solve();
-	setStatus(status);
-	setRows(rows);
-  }
-  console.log(error)
-  return (
-	<Container>
-		<StyledHeader error={!!error} complete={!status.indexOf("Completed")}>
-			<h1> {status} </h1>
-	  	</StyledHeader>
-		<SodokuBoard rows={rows} />
-		<StyledFooter>
-			<ButtonWrapper>
-				<CircleButton
-					text={"Animated Solve"} 
-					onClick={() => {
-						setInterval(solveNextSodokuStep, 0);
-					}}/>
-				<Buoy 
-					text={"Quick Solve"}
-					onClick={() => {
-						setStatus("Working ...");
-						const {
-						status,
-						rows
-						} = sodokuPlayer.quickSolve();
-						setStatus(status);
-						setRows(rows);
-					}}
-				/>
-				<CircleButton
-					text={"Step by step"}
-					onClick={solveNextSodokuStep}
-				/>
-			</ButtonWrapper>
-		</StyledFooter>
-	</Container>
-  );
+	const [stepping, setStepping] = useState(false);
+	const complete = status.indexOf("Completed") !== -1;
+	const working = status.indexOf("Working") !== -1;
+
+	const resetSodokuBoard = () => {
+		clearInterval(sodokuRunner);
+		sodokuPlayer.initializeBoard(initialBoard);
+		setRows(sodokuPlayer.getRows());
+		setStatus(DEFAULTSTATUS);
+		setStepping(false);
+	}
+	const onAnimatedSolveClick = () => {
+		setSodokuRunner(setInterval(solveNextSodokuStep, 1));
+		setStepping(false);
+	}
+	const solveNextSodokuStep = () => {
+		const {
+			status,
+			rows
+		} = sodokuPlayer.solve()
+		setStatus(status);
+		setRows(rows);
+	}
+	const quickSolveSodoku = () => {
+		const {
+			status,
+			rows
+		} = sodokuPlayer.solve();
+		setStatus(status);
+		setRows(rows);
+		setStepping(false);
+	}
+
+	return (
+		<Container>
+			<StyledHeader error={!!error} complete={complete}>
+				<h1> {status} </h1>
+			</StyledHeader>
+			<SodokuBoard rows={rows} />
+			<StyledFooter>
+				<ButtonWrapper>
+					{working && !stepping ? (
+							<CancelButton
+								text={"Cancel"}
+								onClick={resetSodokuBoard}
+							/>
+						) : 
+							(
+								!complete ? (
+									<React.Fragment>
+										<CircleButton
+											text={"Animated Solve"} 
+											onClick={onAnimatedSolveClick}/>
+										<Buoy 
+											text={"Quick Solve"}
+											onClick={() => {
+												setStatus("Working ...");
+												resetSodokuBoard();
+												const {
+													status,
+													rows
+												} = sodokuPlayer.quickSolve();
+												setStatus(status);
+												setRows(rows);
+											}}
+										/>
+										<CircleButton
+											text={"Step by step"}
+											onClick={() => {
+												setStepping(true);
+												solveNextSodokuStep();
+											}}
+										/>
+									</React.Fragment>
+								) : 
+									(
+										<Buoy 
+											text={"Reset"}
+											onClick={resetSodokuBoard}
+										/>
+									)
+							)
+					}
+				</ButtonWrapper>
+			</StyledFooter>
+		</Container>
+	);
 }
+
+export default SodokuViewer;

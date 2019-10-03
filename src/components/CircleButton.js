@@ -4,6 +4,7 @@ import styled from "styled-components"
 const TextWrapper = styled.div`
     text-align: center;
     margin: auto;
+    user-select: none;
 `;
 
 const Indicator = styled.div`
@@ -12,7 +13,7 @@ const Indicator = styled.div`
     background-color: #D8A200;
     width: 75px;
     height: 75px;
-    margin: auto 36px auto 36px;
+    margin: auto 37px auto 37px;
     border-radius: 50%;
     cursor: pointer;
     animation-timing-function: ease-out;
@@ -31,8 +32,12 @@ const Indicator = styled.div`
     }
 `;
 
-const CircleButton = ({text, onClick}) => (
-    <Indicator onClick={onClick}>
+const CircleButton = ({
+    text,
+    onClick,
+    ...rest
+}) => (
+    <Indicator onClick={onClick} {...rest}>
         <TextWrapper> {text} </TextWrapper>
     </Indicator>
 );
