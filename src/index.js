@@ -18,7 +18,7 @@ const table = new SodokuTable([
 ]);
 
 function App() {
-  const [rowToSolve, setRowToSolve] = useState(-1);
+  const [rowToSolve, setRowToSolve] = useState(0);
   const [solveOffset, setSolveOffset] = useState(0);
 
   const [rows, setRows] = useState(table.getRows());

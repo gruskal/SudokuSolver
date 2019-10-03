@@ -5,10 +5,7 @@ function getIntersection(setA, setB) {
 }
 function Cell(value) {
   this.value = value;
-  this.givenConstraints = new Set();
   this.attemptedValues = new Set();
-  this.isPivot = false;
-  this.pivotValue = null;
   this.previousState = null;
   this.impossibles = new Set();
   this.addImpossibles = values =>
@@ -20,9 +17,8 @@ function Row() {
   this.initalImpossibles = new Set();
   this.append = cell => {
     this.cells.push(cell);
-    this.initalImpossibles.add(cell.value);
     if (cell.value !== 0) {
-      const success = this.impossibles.add(cell.value);
+      const success = this.impossibles.add(cell.value) && this.initalImpossibles.add(cell.value);
       if (!success) {
         console.error("Invalid cell structure"); //Make better error
       }
@@ -35,9 +31,8 @@ function Column() {
   this.initalImpossibles = new Set();
   this.append = cell => {
     this.cells.push(cell);
-    this.initalImpossibles.add(cell.value);
     if (cell.value !== 0) {
-      const success = this.impossibles.add(cell.value);
+      const success = this.impossibles.add(cell.value) && this.initalImpossibles.add(cell.value);
       if (!success) {
         console.error("Invalid cell structure"); //Make better error
       }
@@ -50,9 +45,8 @@ function Region() {
   this.initalImpossibles = new Set();
   this.append = cell => {
     this.cells.push(cell);
-    this.initalImpossibles.add(cell.value);
     if (cell.value !== 0) {
-      const success = this.impossibles.add(cell.value);
+      const success = this.impossibles.add(cell.value) && this.initalImpossibles.add(cell.value);
       if (!success) {
         console.error("Invalid cell structure"); //Make better error
       }
@@ -65,6 +59,8 @@ export default class SodokuTable {
     const numRows = rawRows.length;
     const numColumns = rawRows[0].length;
     const numRegions = (numColumns / 3) * (numRows / 3);
+    this.pivotCell = null;
+    this.pivotIndex = -1;
     this.rows = rawRows.map(row => {
       const newRow = new Row();
       row.forEach(cellValue => newRow.append(new Cell(cellValue)));
@@ -94,57 +90,60 @@ export default class SodokuTable {
   getRows = () => this.rows;
 
   solve(currentRow, currentOffset) {
-    console.log("RUn");
+    if(!this.pivotCell) {
+      this.pivotCell = this.getFirstZeroCellInRow(this.rows[0]);
+      this.pivotIndex = this.getCellRowIndex(this.pivotCell, this.rows[0]);
+      this.saveState();
+    }
     this.setCellImpossibles();
-    // this.rows.forEach((row) => {
-    //   row.cells.forEach((cell) => {
-    //     if(cell.value === 0)
-    //      console.log(cell.value, cell.impossibles.size, [...setInterection(POSSIBLES, cell.impossibles)]);
-    //   });
-    // });
     console.log("Row ", currentRow, this.rows);
     let firstCell = true;
-    for (let i in this.rows) {
+    let isFilled = true;
+    let i = currentRow;
+    // for (let i in this.rows) {
       for (let j in this.rows[i].cells) {
         const cell = this.rows[i].cells[j];
         if (cell.value === 0) {
+          isFilled = false;
           const possibilities = [
             ...getIntersection(POSSIBLES, cell.impossibles)
           ];
           console.log("possibilities", possibilities);
           if (firstCell) {
-            if (cell.givenConstraints.size === 0) {
-              cell.givenConstraints.add(possibilities[0]);
-            }
-            // cell.givenConstraints.add(possibilities[0]);
             console.log("check", i > currentRow, i, currentRow);
 
-            if (i > currentRow) {
-              console.log("J ", i);
-              this.saveState();
-              currentRow = i;
-            }
+            // if (i > currentRow) {
+            //   console.log("J ", i);
+            //   this.saveState();
+            //   currentRow = i;
+            // }
             firstCell = false;
           }
-
+          console.log("new piv?", j == this.pivotIndex + 1, j, this.pivotIndex + 1)
           if (possibilities[0]) {
             console.log("new value ", possibilities[0], possibilities);
             cell.value = possibilities[0];
             cell.attemptedValues.add(cell.value);
-
             this.rows[i].impossibles.add(cell.value);
             this.findColumn(cell).impossibles.add(cell.value);
             this.findRegion(cell).impossibles.add(cell.value);
+          } else if (j == this.pivotIndex + 1){
+            this.setNewPivot(currentRow);
+            console.log("resetting ", possibilities[0], possibilities);
+            // currentRow--;
           } else {
             console.log("resetting ", possibilities[0], possibilities);
             this.resetRow(this.rows[i]);
-            currentRow--;
+            // currentRow--;
           }
           break;
         }
       }
-      break;
-    }
+      if(isFilled) {
+        currentRow++;
+      }
+    //   break;
+    // }
     // this.rows.find(row =>
     //   row.cells.find((cell, index) => {
     //     if(cell.value === 0) {
@@ -172,7 +171,49 @@ export default class SodokuTable {
       });
     });
   };
-  getFirstNonZeroInRow = row => row.cells.find(cell => cell.value !== 0);
+  setNewPivot = (currentRow) => {
+    const row = this.rows[currentRow];
+    console.log("SETTING NEW PIVOT _________")
+    // debugger;
+    this.clearAttemptedValuesLeftOfPivot(row);
+    this.resetRow(row, true);
+    const column = this.findColumn(this.pivotCell);
+    const region = this.findRegion(this.pivotCell);
+    this.pivotCell.addImpossibles([
+      ...row.impossibles,
+      ...column.impossibles,
+      ...region.impossibles
+    ]);
+    const remainingPossibilities = getIntersection(POSSIBLES, this.pivotCell.impossibles);
+    if(remainingPossibilities.size === 0) { // If all possibilities for this pivot have been attempted
+      this.pivotCell = this.getNextZeroCellInRow(row, this.pivotIndex);
+      this.pivotIndex = this.getCellRowIndex(this.pivotCell, row);
+    } else {
+      this.pivotCell.value = remainingPossibilities.values().next().value;
+      this.pivotCell.attemptedValues.add(this.pivotCell.value);
+      this.findColumn(this.pivotCell).impossibles.add(this.pivotCell.value);
+      this.findRegion(this.pivotCell).impossibles.add(this.pivotCell.value);
+    }
+
+    
+  }
+  clearAttemptedValuesLeftOfPivot = (row) => {
+    row.cells.forEach((cell, index) => {
+      if(index > this.pivotIndex) {
+        cell.attemptedValues.clear();
+      }
+    });
+  }
+  clearImpossibles = (row) => {
+    row.cells.forEach(cell => {
+      cell.impossibles.clear();
+    });
+  }
+
+  getCellRowIndex = (cell, row) => row.cells.indexOf(cell);
+  getNextZeroCellInRow = (row, currentIndex) => row.cells.find((cell, index) => cell.value === 0 && index > currentIndex);
+  getFirstZeroCellInRow = row => row.cells.find(cell => cell.value === 0);
+
   // loadState = () => {
   //   this.rows.impossibles.clear();
   //   this.columns.impossibles.clear();
@@ -184,20 +225,25 @@ export default class SodokuTable {
   //   });
   //   console.log("loaded", this.rows);
   // }
-  resetRow = row => {
-    row.impossibles = row.initalImpossibles;
-    this.columns.forEach(column => {
-      column.impossibles = column.initalImpossibles;
+  resetRow = (row, resetPivot) => {
+    row.impossibles = new Set(row.initalImpossibles);
+    row.impossibles.add(this.pivotCell.value) // Do this elsewhere in future
+    this.columns.forEach(column => { // Needs to be previous impossibles once a row is conplete to make use of new givens
+      column.impossibles = new Set(column.initalImpossibles);
     });
     this.regions.forEach(region => {
-      region.impossibles = region.initalImpossibles;
+      region.impossibles = new Set(region.initalImpossibles);
     });
     row.cells.forEach(cell => {
       // console.log("setting cell",cell,cell.previousState)
       // cell.givenConstraints = cell.previousState.givenConstraints;
-      cell.value = cell.previousState.value;
-      cell.impossibles = new Set(cell.givenConstraints);
-      cell.previousState = cell.previousState.previousState;
+      if(cell !== this.pivotCell){
+        cell.value = cell.previousState.value;
+      }
+      if(resetPivot || cell !== this.pivotCell) {
+        cell.impossibles = new Set(cell.attemptedValues);
+        // cell.previousState = cell.previousState.previousState;
+      }
 
       // cell = {...cell.previousState, givenConstraints: cell.givenConstraints};
       // console.log("set cell", cell)
@@ -209,6 +255,9 @@ export default class SodokuTable {
     //   cell.impossibles.clear();
     // })
   };
+
+  findRow = cell =>
+    this.rows.find(row => row.cells.indexOf(cell) !== -1);
   findColumn = cell =>
     this.columns.find(column => column.cells.indexOf(cell) !== -1);
   findRegion = cell =>
@@ -217,6 +266,9 @@ export default class SodokuTable {
   setCellImpossibles() {
     this.rows.forEach(row => {
       row.cells.forEach(cell => {
+        if(this.pivotCell === cell) {
+          // debugger;
+        };
         const column = this.findColumn(cell);
         const region = this.findRegion(cell);
         cell.addImpossibles([
