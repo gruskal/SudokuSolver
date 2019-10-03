@@ -1,6 +1,6 @@
 import React from "react";
 
-const SodokuViewer = ({ rows }) => {
+const SodokuBoard = ({ rows }) => {
   const renderRows = () => rows.map(row => <tr>{renderCells(row)}</tr>);
   const renderCells = row => row.cells.map(cell => <td> {cell.value} </td>);
 
@@ -11,4 +11,4 @@ const SodokuViewer = ({ rows }) => {
   );
 };
 
-export default SodokuViewer;
+export default SodokuBoard;
