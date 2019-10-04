@@ -3,14 +3,15 @@ import styled from "styled-components";
 import CellInputField from "../CellInputField";
 
 const Table = styled.table`
-	width: 100%;
-	height: 100%;
-	padding: 0px 20vw 0px 20vw;
+	width: 50%;
+	margin: auto;	
 `;
 
 const FlexWrapper = styled.div`
-	background-color: #83878C;
+	display: flex;
 	flex: 2 0 auto;
+	background-color: #83878C;
+	align-content: center;
 	width: 100%;
 `;
 

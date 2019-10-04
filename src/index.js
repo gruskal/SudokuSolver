@@ -22,11 +22,9 @@ const INITIALBOARD = [
 
 const Container = styled.div`
   display: flex;
-  flex: 1 0 auto;
   flex-direction: column;
-  justify-content: center;
-  background-color: #ecf0f1;
   height: 100%;
+  background-color: #ecf0f1;
   overflow: hidden;
 `;
 

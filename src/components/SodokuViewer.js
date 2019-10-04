@@ -115,7 +115,7 @@ function SodokuViewer({
 				complete={complete}
 			>
 				<h1> {status} </h1>
-				{status === DEFAULTSTATUS ?
+				{status === DEFAULTSTATUS || status === "No solution" ?
 					<EditButton
 						text="Edit"
 						onClick={() => {

@@ -7,42 +7,51 @@ const StyledInput = styled(({
 }) => (
     <input size={1} max={9} min={0} type="number" {...rest} />
 ))`
-  ::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
+    width: 15px;
+    -moz-appearance:textfield;
+
+    ::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
 `;
 
 const CellInputField = ({
     value,
     onChange
 }) => {
-    const handleChange = (event) => {
+    const handleChange = (event, v) => {
         let {
-            target,
-            nativeEvent: {
-                data
-            }
+            target
         } = event;
-        if(!data) {
-            data = 0;
+        if(target.value.length > 1) {
+            target.value = target.value.substr(0,1);
         }
-        target.value = data;
         if(onChange) {
-            onChange(data);
+            onChange(target.value);
         }
     };
-
-    const handleClick = ({
+    const handleFocus = ({
         target
     }) => {
-        target.select();
+        target.value = "";
+    };
+    const handleBlur= ({
+        target
+    }) => {
+        if(target.value === "") {
+            target.value = 0;
+            if(onChange) {
+                onChange(target.value);
+            }
+        }
     };
 
     return (
         <StyledInput
             defaultValue={value}
-            onFocus={handleClick}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
             onChange={handleChange}
         />
     );
