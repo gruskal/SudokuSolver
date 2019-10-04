@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import {
 	Header,
-	Content,
 	Footer,
 	SodokuBoard
 } from "./layout";
@@ -10,7 +9,16 @@ import {
 	Buoy,
 	CircleButton
 } from "./";
+const EDITSTATUS = "Editing, when you're done press:";
+const DEFAULTSTATUS = "Click on a solve option to begin, or:";
 
+const EditButton = styled(CircleButton)`
+	color: #EDEDED;
+	height: 50px;
+	width: 50px;
+	background-color: #343434;
+	margin: auto 0 auto 12px;
+`;
 const CancelButton = styled(CircleButton)`
 	background-color: #B22020;
 	margin: auto auto 30px auto;
@@ -47,17 +55,19 @@ function SodokuViewer({
 	initialBoard,
 	error
 }) {
-	const DEFAULTSTATUS = "Click on a solve option to begin";
+	const [currentBoard, setBoard] = useState(initialBoard);
 	const [sodokuRunner, setSodokuRunner] = useState();
 	const [status, setStatus] = useState(error || DEFAULTSTATUS);
 	const [rows, setRows] = useState(sodokuPlayer.getRows());
 	const [stepping, setStepping] = useState(false);
-	const complete = status.indexOf("Completed") !== -1;
+	const [editMode, setEditMode] = useState(false);
+	const complete = status.indexOf("Complete") !== -1;
 	const working = status.indexOf("Working") !== -1;
+	const hasError = !!error || status.indexOf("Invalid") !== -1;
 
 	const resetSodokuBoard = () => {
 		clearInterval(sodokuRunner);
-		sodokuPlayer.initializeBoard(initialBoard);
+		sodokuPlayer.initializeBoard(currentBoard);
 		setRows(sodokuPlayer.getRows());
 		setStatus(DEFAULTSTATUS);
 		setStepping(false);
@@ -75,66 +85,108 @@ function SodokuViewer({
 		setRows(rows);
 	}
 	const quickSolveSodoku = () => {
+		setStepping(false);
+		setStatus("Working ...");
+		resetSodokuBoard();
 		const {
 			status,
 			rows
-		} = sodokuPlayer.solve();
+		} = sodokuPlayer.quickSolve();
 		setStatus(status);
 		setRows(rows);
-		setStepping(false);
+	}
+	const handleBoardUpdate = (value, rowIndex, cellIndex) => {
+		const newRows = [...rows];
+		newRows[rowIndex].cells[cellIndex] = {value: parseInt(value)};
+		const newBoard = newRows.map((row) => (
+			row.cells.map((cell) => (
+				cell.value
+			))
+		))
+		setBoard(newBoard);
+		sodokuPlayer.initializeBoard(newBoard, setStatus);
+		setRows(sodokuPlayer.getRows());
 	}
 
 	return (
 		<Container>
-			<StyledHeader error={!!error} complete={complete}>
+			<StyledHeader 
+				error={hasError} 
+				complete={complete}
+			>
 				<h1> {status} </h1>
+				{status === DEFAULTSTATUS ?
+					<EditButton
+						text="Edit"
+						onClick={() => {
+							setStatus(EDITSTATUS);
+							setEditMode(true);
+						}}
+					/>
+					: status === EDITSTATUS &&
+					<EditButton
+						text="Finish"
+						onClick={() => {
+							setStatus(DEFAULTSTATUS);
+							setEditMode(false);
+						}}
+					/>
+				}
 			</StyledHeader>
-			<SodokuBoard rows={rows} />
+			<SodokuBoard 
+				onUpdate={handleBoardUpdate}
+				editMode={editMode}
+				rows={rows} 
+			/>
 			<StyledFooter>
-				<ButtonWrapper>
-					{working && !stepping ? (
-							<CancelButton
-								text={"Cancel"}
-								onClick={resetSodokuBoard}
-							/>
-						) : 
-							(
-								!complete ? (
-									<React.Fragment>
-										<CircleButton
-											text={"Animated Solve"} 
-											onClick={onAnimatedSolveClick}/>
-										<Buoy 
-											text={"Quick Solve"}
-											onClick={() => {
-												setStatus("Working ...");
-												resetSodokuBoard();
-												const {
-													status,
-													rows
-												} = sodokuPlayer.quickSolve();
-												setStatus(status);
-												setRows(rows);
-											}}
-										/>
-										<CircleButton
-											text={"Step by step"}
-											onClick={() => {
-												setStepping(true);
-												solveNextSodokuStep();
-											}}
-										/>
-									</React.Fragment>
-								) : 
-									(
-										<Buoy 
-											text={"Reset"}
-											onClick={resetSodokuBoard}
-										/>
-									)
-							)
-					}
-				</ButtonWrapper>
+				{editMode ? (
+					<ButtonWrapper>
+						<CircleButton
+							text="Finish"
+							onClick={() => {
+								setEditMode(false);
+								setStatus(DEFAULTSTATUS);
+							}}
+						/>
+					</ButtonWrapper>
+				) :
+				(
+					<ButtonWrapper>
+						{working && !stepping ? (
+								<CancelButton
+									text="Cancel"
+									onClick={resetSodokuBoard}
+								/>
+							) : 
+								(
+									!complete ? (
+										<React.Fragment>
+											<CircleButton
+												text="Animated Solve"
+												onClick={onAnimatedSolveClick}/>
+											<Buoy 
+												text="Quick Solve"
+												onClick={quickSolveSodoku}
+											/>
+											<CircleButton
+												text="Step by step"
+												onClick={() => {
+													setStepping(true);
+													solveNextSodokuStep();
+												}}
+											/>
+										</React.Fragment>
+									) : 
+										(
+											<Buoy 
+												text="Reset"
+												onClick={resetSodokuBoard}
+											/>
+										)
+								)
+						}
+					</ButtonWrapper>
+				)}
 			</StyledFooter>
 		</Container>
 	);

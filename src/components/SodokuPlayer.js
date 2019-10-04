@@ -1,4 +1,5 @@
 const POSSIBLES = new Set([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+const EDITSTATUS = "Editing, when you're done press:";
 
 function getIntersection(setA, setB) {
 	return new Set([...setA].filter(value => !setB.has(value)));
@@ -93,6 +94,8 @@ class SodokuPlayer {
 			} else {
 				return "Invalid Sodoku Board";
 			}
+		} else if(onStatusUpdate) {
+			onStatusUpdate(EDITSTATUS);
 		}
 	}
 	getRows = () => this.rows;
@@ -100,6 +103,12 @@ class SodokuPlayer {
 	quickSolve() {
 		const start = new Date().getTime();
 		for(let i = 0; i < this.cells.length; i++) {
+			if(i < 0) {
+				return {
+					status: "No solution",
+					rows: [...this.rows]
+				}	
+			}
 			const currentCell = this.cells[i];
 			if(currentCell.given) {
 				if(this.reversing) {
@@ -136,6 +145,11 @@ class SodokuPlayer {
 					status: "Complete",
 					rows: [...this.rows]
 				}
+			} else if(this.currentSolveIndex < 0) {
+				return {
+					status: "No solution",
+					rows: [...this.rows]
+				}	
 			}
 			const currentCell = this.cells[this.currentSolveIndex];
 			if(currentCell.given) {

@@ -17,8 +17,6 @@ const Footer = ({
   <Container {...rest}>
     {children}
   </Container>
-)
-
-;
+);
 
 export default Footer;

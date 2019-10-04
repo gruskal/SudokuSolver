@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import ReactDOM from "react-dom";
 import styled from "styled-components";
 import SodokuPlayer from "./components/SodokuPlayer"
@@ -6,7 +6,6 @@ import SodokuViewer from "./components/SodokuViewer";
 import {
   Header,
   Content,
-  Footer
 } from "./components/layout";
 
 
@@ -41,15 +40,15 @@ import {
   [0, 0, 0, 0, 0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0, 0, 0, 0, 0]
 
-    [5, 3, 0, 0, 7, 0, 0, 0, 0],
-    [0, 9, 0, 0, 0, 4, 0, 0, 0],
-    [4, 0, 0, 0, 0, 0, 0, 6, 1],
-    [0, 6, 0, 3, 2, 0, 0, 0, 4],
-    [0, 0, 0, 0, 8, 0, 0, 0, 0],
-    [7, 0, 0, 0, 4, 9, 0, 2, 0],
-    [3, 5, 0, 0, 0, 0, 0, 0, 9],
-    [0, 0, 0, 2, 0, 0, 0, 4, 0],
-    [0, 0, 0, 0, 3, 0, 0, 1, 6]
+  [5, 3, 0, 0, 7, 0, 0, 0, 0],
+  [0, 9, 0, 0, 0, 4, 0, 0, 0],
+  [4, 0, 0, 0, 0, 0, 0, 6, 1],
+  [0, 6, 0, 3, 2, 0, 0, 0, 4],
+  [0, 0, 0, 0, 8, 0, 0, 0, 0],
+  [7, 0, 0, 0, 4, 9, 0, 2, 0],
+  [3, 5, 0, 0, 0, 0, 0, 0, 9],
+  [0, 0, 0, 2, 0, 0, 0, 4, 0],
+  [0, 0, 0, 0, 3, 0, 0, 1, 6]
 */
 
 const Container = styled.div`
