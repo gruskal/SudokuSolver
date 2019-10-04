@@ -1,8 +1,8 @@
 # SodokuSolver
 Solves sodoku puzzles with various solving options: Step by step, animated solve, quick solve
-- Step by step: cick to iterate through the solution step by step
+- Step by step: click to iterate through the solution step by step
 - Animated solve: automatically iterates through the solution
-- Quick solve: Solves without updating the displayed board - Significantly faster
+- Quick solve: solves without updating the displayed board - Significantly faster
 #### You can also edit the board to solve a different puzzle by clicking the edit button
   
 ## Prerequisites:
