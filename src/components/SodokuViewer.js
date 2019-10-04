@@ -9,9 +9,12 @@ import {
 	Buoy,
 	CircleButton
 } from "./";
+
+/* Constants */
 const EDITSTATUS = "Editing, when you're done press:";
 const DEFAULTSTATUS = "Click on a solve option to begin, or:";
 
+/* Styles */
 const EditButton = styled(CircleButton)`
 	color: #EDEDED;
 	height: 50px;
@@ -50,6 +53,7 @@ const Container = styled.div`
 	background-color: #222222;
 `;
 
+/* Component */
 function SodokuViewer({
 	sodokuPlayer,
 	initialBoard,
@@ -80,7 +84,7 @@ function SodokuViewer({
 		const {
 			status,
 			rows
-		} = sodokuPlayer.solve()
+		} = sodokuPlayer.solveNextStep()
 		setStatus(status);
 		setRows(rows);
 	}

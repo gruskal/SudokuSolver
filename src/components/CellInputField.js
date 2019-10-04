@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components"
 
+/* Styles */
 const StyledInput = styled(({
     name,
     ...rest
@@ -16,11 +17,12 @@ const StyledInput = styled(({
     }
 `;
 
+/* Component */
 const CellInputField = ({
     value,
     onChange
 }) => {
-    const handleChange = (event, v) => {
+    const handleChange = (event) => {
         let {
             target
         } = event;

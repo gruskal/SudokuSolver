@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import CellInputField from "../CellInputField";
 
+/* Styles */
 const Table = styled.table`
 	width: 50%;
 	margin: auto;	
@@ -21,6 +22,7 @@ const Cell = styled.td`
 	text-align: center;
 `;
 
+/* Component */
 const SodokuBoard = ({
 	rows,
 	editMode,

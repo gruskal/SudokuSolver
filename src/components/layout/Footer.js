@@ -1,6 +1,7 @@
 import * as React from "react";
 import styled from "styled-components";
 
+/* Styles */
 const Container = styled.div`
   display: flex;
   flex: 1 0 auto;
@@ -10,6 +11,7 @@ const Container = styled.div`
   padding: 8px;
 `;
 
+/* Component */
 const Footer = ({
   children,
   ...rest

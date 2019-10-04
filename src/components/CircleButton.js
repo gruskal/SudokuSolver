@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components"
 
+/* Styles */
 const TextWrapper = styled.div`
     text-align: center;
     margin: auto;
@@ -32,6 +33,7 @@ const Indicator = styled.div`
     }
 `;
 
+/* Component */
 const CircleButton = ({
     text,
     onClick,

@@ -1,6 +1,7 @@
 import * as React from "react";
 import styled from "styled-components";
 
+/* Styles */
 const Container = styled.div`
   color: #EDEDED;
   display: flex;
@@ -11,7 +12,7 @@ const Container = styled.div`
   padding: 12px;
 `;
 
-
+/* Component */
 const Header = ({
    children,
    ...rest

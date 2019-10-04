@@ -1,6 +1,7 @@
 const POSSIBLES = new Set([1, 2, 3, 4, 5, 6, 7, 8, 9]);
 const EDITSTATUS = "Editing, when you're done press:";
 
+/* Helper functions */
 function getIntersection(setA, setB) {
 	return new Set([...setA].filter(value => !setB.has(value)));
 }
@@ -16,6 +17,7 @@ function cellStructureAppend(cell, cells, constraints) {
 	}
 }
 
+/* Schema / Cell Datastructures */
 function Cell(value) {
 	this.value = value;
 	this.attemptedValues = new Set();
@@ -45,15 +47,13 @@ class SodokuPlayer {
 		this.reversing = false;
 		const numRows = rawRows.length;
 		const numColumns = rawRows[0].length;
-		this.pivotCell = null;
 		this.cells = [];
 		this.error = false;
-		this.pivotIndex = -1;
-		this.rows = rawRows.map(row => {
+		this.rows = rawRows.map(row => { // Sort raw rows into rows of cells and a list of flattened cells
 			const newRow = new Row();
 			row.forEach(cellValue => {
-				const cell = new Cell(cellValue); // Flattened array of all cells
-				this.cells.push(cell);
+				const cell = new Cell(cellValue);
+				this.cells.push(cell); // Flattened array of all cells
 				const error = newRow.append(cell);
 				if(!this.error && error) {
 					this.error = true;
@@ -62,7 +62,7 @@ class SodokuPlayer {
 			return newRow;
 		});
 		this.columns = [[], []];
-		for (let i = 0; i < numColumns; i++) {
+		for (let i = 0; i < numColumns; i++) { // Create columns from rows of cells
 			const newColumn = new Column();
 			this.rows.forEach(row => {
 				const error = newColumn.append(row.cells[i]);
@@ -73,14 +73,14 @@ class SodokuPlayer {
 			this.columns[i] = newColumn;
 		}
 		this.regions = [];
-		for (let i = 0; i < numRows; i += 3) {
+		for (let i = 0; i < numRows; i += 3) { // Create regions from rows of cells
 			for (let j = 0; j < numColumns / 3; j++) {
 				const newRegion = new Region();
 				for (let rowNum = 0; rowNum < 3; rowNum++) {
 					const error1 = newRegion.append(this.rows[i + rowNum].cells[j * 3]);
 					const error2 = newRegion.append(this.rows[i + rowNum].cells[j * 3 + 1]);
 					const error3 =  newRegion.append(this.rows[i + rowNum].cells[j * 3 + 2]);
-					if(!this.error && (error1 && error2 && error3)) {
+					if(!this.error && (error1 || error2 || error3)) {
 						this.error = true;
 					}
 				}
@@ -91,7 +91,7 @@ class SodokuPlayer {
 		if(this.error) {
 			if(onStatusUpdate) {
 				onStatusUpdate("Invalid Sodoku Board");
-			} else {
+			} else { // If no updater is given, return status update instead
 				return "Invalid Sodoku Board";
 			}
 		} else if(onStatusUpdate) {
@@ -100,7 +100,7 @@ class SodokuPlayer {
 	}
 	getRows = () => this.rows;
 
-	quickSolve() {
+	quickSolve() { // Solves Sodoku with no delay between steps
 		const start = new Date().getTime();
 		for(let i = 0; i < this.cells.length; i++) {
 			if(i < 0) {
@@ -139,7 +139,7 @@ class SodokuPlayer {
 			rows: [...this.rows]
 		}
 	}
-	solve() {
+	solveNextStep() { // Used for step by step and animated solve
 			if(this.currentSolveIndex === this.cells.length) {
 				return {
 					status: "Complete",

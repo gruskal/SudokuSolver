@@ -8,6 +8,7 @@ import {
   Content,
 } from "./components/layout";
 
+/* Constants */
 const INITIALBOARD = [
   [8, 0, 0, 9, 3, 0, 0, 0, 2],
   [0, 0, 9, 0, 0, 0, 0, 4, 0],
@@ -20,6 +21,7 @@ const INITIALBOARD = [
   [5, 0, 0, 0, 6, 2, 0, 0, 8]
 ];
 
+/* Styles */
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -34,7 +36,8 @@ const StyledHeader = styled(Header)`
   background-color: #444444;
 `;
 
-function App() {
+/* Component */
+const App = () => {
   const sodokuPlayer = new SodokuPlayer();
   const error = sodokuPlayer.initializeBoard(INITIALBOARD);
 
