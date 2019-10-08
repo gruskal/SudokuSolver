@@ -1,5 +1,5 @@
-# SodokuSolver
-Solves sodoku puzzles with various solving options: Step by step, animated solve, quick solve
+# SudokuSolver
+Solves sudoku puzzles with various solving options: Step by step, animated solve, quick solve
 - Step by step: click to iterate through the solution step by step
 - Animated solve: automatically iterates through the solution
 - Quick solve: solves without updating the displayed board - Significantly faster
