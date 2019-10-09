@@ -42,27 +42,49 @@ function Region() {
 }
 
 class SodokuPlayer {
-	initializeBoard = (rawRows, onStatusUpdate) => {
+	initializeBoard = (rawCells, onStatusUpdate) => {
 		this.currentSolveIndex = 0
 		this.reversing = false;
-		const numRows = rawRows.length;
-		const numColumns = rawRows[0].length;
+		const boardSize = 9;
 		this.cells = [];
 		this.error = false;
-		this.rows = rawRows.map(row => { // Sort raw rows into rows of cells and a list of flattened cells
-			const newRow = new Row();
-			row.forEach(cellValue => {
-				const cell = new Cell(cellValue);
-				this.cells.push(cell); // Flattened array of all cells
-				const error = newRow.append(cell);
-				if(!this.error && error) {
-					this.error = true;
-				}
-			});
-			return newRow;
-		});
+		this.rows = new Array(9);
+		for(let i = 0; i < this.rows.length; i++) {
+			this.rows[i] = new Row();
+		}
+		for (let i = 0; i < rawCells.length; i++) {
+			const cell = new Cell(rawCells[i]);			
+			this.cells.push(cell); // Flattened array of all cells
+			const rowNumber = Math.floor(i / 9);
+			const error = this.rows[rowNumber].append(cell);
+			if(!this.error && error) {
+				this.error = true;
+			}
+		}
+		// cells.forEach((cellValue, index) => {
+		// 	const cell = new Cell(cellValue);			
+		// 	this.cells.push(cell); // Flattened array of all cells
+		// 	console.log(index)			
+		// 	const rowNumber = Math.floor(index / 9);
+		// 	const error = this.rows[rowNumber].append(cell);
+		// 	if(!this.error && error) {
+		// 		this.error = true;
+		// 	}
+		// })
+		// this.rows = rawRows.map(row => { // Sort raw rows into rows of cells and a list of flattened cells
+		// 	const newRow = new Row();
+		// 	row.forEach(cellValue => {
+		// 		const cell = new Cell(cellValue);
+		// 		this.cells.push(cell); // Flattened array of all cells
+		// 		const error = newRow.append(cell);
+		// 		if(!this.error && error) {
+		// 			this.error = true;
+		// 		}
+		// 	});
+		// 	return newRow;
+		// });
 		this.columns = [[], []];
-		for (let i = 0; i < numColumns; i++) { // Create columns from rows of cells
+		for (let i = 0; i < boardSize; i++) { // Create columns from rows of cells
 			const newColumn = new Column();
 			this.rows.forEach(row => {
 				const error = newColumn.append(row.cells[i]);
@@ -73,8 +95,8 @@ class SodokuPlayer {
 			this.columns[i] = newColumn;
 		}
 		this.regions = [];
-		for (let i = 0; i < numRows; i += 3) { // Create regions from rows of cells
-			for (let j = 0; j < numColumns / 3; j++) {
+		for (let i = 0; i < boardSize; i += 3) { // Create regions from rows of cells
+			for (let j = 0; j < boardSize / 3; j++) {
 				const newRegion = new Region();
 				for (let rowNum = 0; rowNum < 3; rowNum++) {
 					const error1 = newRegion.append(this.rows[i + rowNum].cells[j * 3]);
@@ -98,7 +120,7 @@ class SodokuPlayer {
 			onStatusUpdate(EDITSTATUS);
 		}
 	}
-	getRows = () => this.rows;
+	getCells = () => this.cells;
 
 	quickSolve() { // Solves Sodoku with no delay between steps
 		const start = new Date().getTime();
@@ -106,13 +128,13 @@ class SodokuPlayer {
 			if(i < 0) {
 				return {
 					status: "No solution",
-					rows: [...this.rows]
+					cells: [...this.cells]
 				}	
 			}
 			const currentCell = this.cells[i];
 			if(currentCell.given) {
 				if(this.reversing) {
-					i -= 2;
+					i -= 2; // Go back to previous step
 				}
 				continue;
 			} else {
@@ -131,24 +153,24 @@ class SodokuPlayer {
 					this.removeCellConstraint(previousCell);
 					previousCell.value = 0;
 				}
-				i -= 2;
+				i -= 2; // Go back to previous step
 			}
 		}
 		return {
 			status: `Completed in ${new Date().getTime() - start}ms`,
-			rows: [...this.rows]
+			cells: [...this.cells]
 		}
 	}
 	solveNextStep() { // Used for step by step and animated solve
 			if(this.currentSolveIndex === this.cells.length) {
 				return {
 					status: "Complete",
-					rows: [...this.rows]
+					cells: [...this.cells]
 				}
 			} else if(this.currentSolveIndex < 0) {
 				return {
 					status: "No solution",
-					rows: [...this.rows]
+					cells: [...this.cells]
 				}	
 			}
 			const currentCell = this.cells[this.currentSolveIndex];
@@ -156,7 +178,7 @@ class SodokuPlayer {
 				this.currentSolveIndex = this.reversing ? --this.currentSolveIndex : ++this.currentSolveIndex;
 				return {
 					status: "Working Reverse",
-					rows: [...this.rows]
+					cells: [...this.cells]
 				}
 			} else {
 				this.reversing = false;
@@ -179,10 +201,10 @@ class SodokuPlayer {
 			}
 		return {
 			status: "Working Forward",
-			rows: [...this.rows]
+			cells: [...this.cells]
 		}
 	}
-
+	
 	removeCellConstraint = (cell) => {
 		if(cell.value === 0) return;
 		this.findColumn(cell).constraints.delete(cell.value);

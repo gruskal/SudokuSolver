@@ -1,8 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import styled from "styled-components";
-import SodokuPlayer from "./components/SodokuPlayer"
-import SodokuViewer from "./components/SodokuViewer";
+import SudokuPlayer from "./components/SudokuPlayer"
+import SudokuViewer from "./components/SudokuViewer";
 import {
   Header,
   Content,
@@ -10,16 +10,27 @@ import {
 
 /* Constants */
 const INITIALBOARD = [
-  [8, 0, 0, 9, 3, 0, 0, 0, 2],
-  [0, 0, 9, 0, 0, 0, 0, 4, 0],
-  [7, 0, 2, 1, 0, 0, 9, 6, 0],
-  [2, 0, 0, 0, 0, 0, 0, 9, 0],
-  [0, 6, 0, 0, 0, 0, 0, 7, 0],
-  [0, 7, 0, 0, 0, 6, 0, 0, 5],
-  [0, 2, 7, 0, 0, 8, 4, 0, 6],
-  [0, 3, 0, 0, 0, 0, 5, 0, 0],
-  [5, 0, 0, 0, 6, 2, 0, 0, 8]
+  8, 0, 0, 9, 3, 0, 0, 0, 2,
+  0, 0, 9, 0, 0, 0, 0, 4, 0,
+  7, 0, 2, 1, 0, 0, 9, 6, 0,
+  2, 0, 0, 0, 0, 0, 0, 9, 0,
+  0, 6, 0, 0, 0, 0, 0, 7, 0,
+  0, 7, 0, 0, 0, 6, 0, 0, 5,
+  0, 2, 7, 0, 0, 8, 4, 0, 6,
+  0, 3, 0, 0, 0, 0, 5, 0, 0,
+  5, 0, 0, 0, 6, 2, 0, 0, 8
 ];
+
+// const INITIALBOARD = [
+//    [0,0,0,0,1,4,0,0,0],
+//    [0,3,0,0,0,0,2,0,0],
+//    [0,7,0,0,0,0,0,0,0],
+//    [0,0,0,9,0,0,0,3,0],
+//    [6,0,1,0,0,0,0,0,0],
+//    [0,0,0,0,0,0,0,8,0],
+//    [2,0,0,0,0,0,1,0,4],
+//    [0,0,0,0,5,0,6,0,0],
+//    [0,0,0,7,0,8,0,0,0]];
 
 /* Styles */
 const Container = styled.div`
@@ -38,16 +49,16 @@ const StyledHeader = styled(Header)`
 
 /* Component */
 const App = () => {
-  const sodokuPlayer = new SodokuPlayer();
-  const error = sodokuPlayer.initializeBoard(INITIALBOARD);
+  const sudokuPlayer = new SudokuPlayer();
+  const error = sudokuPlayer.initializeBoard(INITIALBOARD);
 
   return (
     <Container>
-      <StyledHeader>
-        <h1> SodokuSolver </h1>
-      </StyledHeader>
+      {/* <StyledHeader>
+        <h1> SudokuSolver </h1>
+      </StyledHeader> */}
       <Content>
-        <SodokuViewer initialBoard={INITIALBOARD} error={error} sodokuPlayer={sodokuPlayer}/>
+        <SudokuViewer initialBoard={INITIALBOARD} error={error} sudokuPlayer={sudokuPlayer}/>
       </Content>
     </Container>
   );

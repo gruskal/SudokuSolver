@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import styled from "styled-components";
+import SudokuBoard from "./SudokuBoard/SudokuBoard"
 import {
 	Header,
 	Footer,
-	SodokuBoard
 } from "./layout";
 import {
 	Buoy,
@@ -55,14 +55,15 @@ const Container = styled.div`
 
 /* Component */
 function SodokuViewer({
-	sodokuPlayer,
+	sudokuPlayer,
 	initialBoard,
 	error
 }) {
+	const boardRef = useRef(null);
 	const [currentBoard, setBoard] = useState(initialBoard);
 	const [sodokuRunner, setSodokuRunner] = useState();
 	const [status, setStatus] = useState(error || DEFAULTSTATUS);
-	const [rows, setRows] = useState(sodokuPlayer.getRows());
+	const [cells, setCells] = useState(sudokuPlayer.getCells());
 	const [stepping, setStepping] = useState(false);
 	const [editMode, setEditMode] = useState(false);
 	const complete = status.indexOf("Complete") !== -1;
@@ -71,8 +72,8 @@ function SodokuViewer({
 
 	const resetSodokuBoard = () => {
 		clearInterval(sodokuRunner);
-		sodokuPlayer.initializeBoard(currentBoard);
-		setRows(sodokuPlayer.getRows());
+		sudokuPlayer.initializeBoard(currentBoard);
+		setCells(sudokuPlayer.getCells());
 		setStatus(DEFAULTSTATUS);
 		setStepping(false);
 	}
@@ -83,10 +84,10 @@ function SodokuViewer({
 	const solveNextSodokuStep = () => {
 		const {
 			status,
-			rows
-		} = sodokuPlayer.solveNextStep()
+			cells
+		} = sudokuPlayer.solveNextStep()
 		setStatus(status);
-		setRows(rows);
+		setCells(cells);
 	}
 	const quickSolveSodoku = () => {
 		setStepping(false);
@@ -94,24 +95,23 @@ function SodokuViewer({
 		resetSodokuBoard();
 		const {
 			status,
-			rows
-		} = sodokuPlayer.quickSolve();
+			cells
+		} = sudokuPlayer.quickSolve();
 		setStatus(status);
-		setRows(rows);
+		setCells(cells);
 	}
 	const handleBoardUpdate = (value, rowIndex, cellIndex) => {
-		const newRows = [...rows];
-		newRows[rowIndex].cells[cellIndex] = {value: parseInt(value)};
-		const newBoard = newRows.map((row) => (
-			row.cells.map((cell) => (
-				cell.value
-			))
-		))
-		setBoard(newBoard);
-		sodokuPlayer.initializeBoard(newBoard, setStatus);
-		setRows(sodokuPlayer.getRows());
+		// const newRows = [...rows];
+		// newRows[rowIndex].cells[cellIndex] = {value: parseInt(value)};
+		// const newBoard = newRows.map((row) => (
+		// 	row.cells.map((cell) => (
+		// 		cell.value
+		// 	))
+		// ))
+		// setBoard(newBoard);
+		// sudokuPlayer.initializeBoard(newBoard, setStatus);
+		// setRows(sudokuPlayer.getRows());
 	}
-
 	return (
 		<Container>
 			<StyledHeader 
@@ -125,6 +125,7 @@ function SodokuViewer({
 						onClick={() => {
 							setStatus(EDITSTATUS);
 							setEditMode(true);
+							boardRef.current.focus();
 						}}
 					/>
 					: status === EDITSTATUS &&
@@ -137,11 +138,7 @@ function SodokuViewer({
 					/>
 				}
 			</StyledHeader>
-			<SodokuBoard 
-				onUpdate={handleBoardUpdate}
-				editMode={editMode}
-				rows={rows} 
-			/>
+			<SudokuBoard cells={cells} editMode={editMode} ref={boardRef}/>
 			<StyledFooter>
 				{editMode ? (
 					<ButtonWrapper>
