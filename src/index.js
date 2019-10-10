@@ -141,8 +141,13 @@ class Main extends React.Component {
   }
 
   handleFinish = () => {
+    /* Temporary : Blank cell bug fix workaround */
+    const newCells = this.readCells().map((value) => {
+      return {value: value};
+    });
     this.setState({
-      editMode: false
+      editMode: false,
+      cells: newCells
     });
   }
 
