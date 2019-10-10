@@ -13,6 +13,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  max-width: 1000px;
   height: ${({height}) => height};
   ${({compact}) => ( compact ?
     "margin: auto" :
@@ -28,7 +29,7 @@ class SudokuBoard extends React.Component {
     this.state = {
       height: "auto",
       maxRegionHeight: "none",
-      maxCellHeight: "none",
+      maxCellHeight: "none"
     }
   }
 
@@ -110,6 +111,7 @@ class SudokuBoard extends React.Component {
       if(index > 0 && index % boardRowLength === 0) { // If next region is below current
         index += boardRowLength * 2;
       }
+
       const regionCells = getRegionCells(cells, index);
       const cellComponents = regionCells.map((cell) => {
         const cellIndex = cells.indexOf(cell);
@@ -121,7 +123,7 @@ class SudokuBoard extends React.Component {
             value={cell.value}
             index={cellIndex + 1}
             editMode={editMode}
-            maxCellHeight={this.state.maxCellHeight}          
+            maxCellHeight={this.state.maxCellHeight}      
             onClick={() => this.navigationIndex = cellIndex}
           />
         );

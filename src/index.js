@@ -97,7 +97,6 @@ class Main extends React.Component {
     this.worker = new SudokuWorker();
     this.worker.addEventListener('message', this.handleWorkerMessage, false);
     window.addEventListener('resize', () => {
-      console.log("resize")
       this.forceUpdate();
     });
     
@@ -124,7 +123,7 @@ class Main extends React.Component {
       } = event;
 
       if(command === "QuickSolve") {
-        console.log(cells)
+        console.log("Cell Values: ", cells.map((cell) => cell.value));
         this.setState({
           cells: cells
         });

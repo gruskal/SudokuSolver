@@ -253,11 +253,9 @@ const WorkerThread = () => {
                 cells: initialCells
             }
         } = event;
-        console.log("Worker data received from the main thread: ", event.data);
-        // Do what we want with do something with event.data
         if(command === "QuickSolve") {
             const sudokuPlayer = new SudokuPlayer();
-            const error = sudokuPlayer.initializeBoard(initialCells);
+            sudokuPlayer.initializeBoard(initialCells);
 
             const {
                 status,

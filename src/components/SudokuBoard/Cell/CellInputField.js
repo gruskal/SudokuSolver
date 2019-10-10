@@ -1,12 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import styled from "styled-components"
 
 /* Styles */
-const Text = styled.div`
-    font-size: 2em;
-    margin: auto;
-`;
-
 const StyledInput = styled(({
     name,
     disabled,
@@ -15,7 +10,7 @@ const StyledInput = styled(({
     <input size={1} max={9} min={1} type="number" {...rest} disabled={disabled}/>
 ))`
     background-color: transparent;
-    font-size: 2em;
+    font-size: ${window.outerWidth  > 600 ?  "1em" : "2em"};
     border: none;
     box-shadow: none;
     outline: none;
@@ -34,25 +29,17 @@ class CellInputField extends React.Component {
         super(props);
 
         this.state = {
-            disabledProp: props.disabled,
+            timeProp: props.time,
             valueProp: props.value,
             currentValue: props.value
         }
     }
 
     static getDerivedStateFromProps(props, state) {
-        if(props.id === "c11") {
-            debugger;
-        }
         if(props.value !== state.valueProp) {
             return {
                 valueProp: props.value,
                 currentValue: props.value
-            };
-        }
-        if(props.disabled === true) {
-            return {
-                valueProp: -1
             };
         }
         return null;
@@ -62,7 +49,6 @@ class CellInputField extends React.Component {
         let {
             target
         } = event;
-        debugger;
         let newValue = target.value;
         if(target.value.length > 1) { // Limit value to one character
             newValue = target.value.substr(0,1);
@@ -91,6 +77,7 @@ class CellInputField extends React.Component {
             value,
             id,
             disabled,
+            time,
             ...rest
         } = this.props;
         return (
@@ -101,6 +88,7 @@ class CellInputField extends React.Component {
                 onKeyUp={this.handleKeyUp}
                 onChange={this.handleChange}
                 id={id}
+                time={time}
                 {...rest}
             />
         );
