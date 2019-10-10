@@ -1,5 +1,4 @@
 const POSSIBLES = new Set([1, 2, 3, 4, 5, 6, 7, 8, 9]);
-const EDITSTATUS = "Editing, when you're done press:";
 
 /* Helper functions */
 function getIntersection(setA, setB) {
@@ -61,28 +60,6 @@ class SodokuPlayer {
 				this.error = true;
 			}
 		}
-		// cells.forEach((cellValue, index) => {
-		// 	const cell = new Cell(cellValue);			
-		// 	this.cells.push(cell); // Flattened array of all cells
-		// 	console.log(index)			
-		// 	const rowNumber = Math.floor(index / 9);
-		// 	const error = this.rows[rowNumber].append(cell);
-		// 	if(!this.error && error) {
-		// 		this.error = true;
-		// 	}
-		// })
-		// this.rows = rawRows.map(row => { // Sort raw rows into rows of cells and a list of flattened cells
-		// 	const newRow = new Row();
-		// 	row.forEach(cellValue => {
-		// 		const cell = new Cell(cellValue);
-		// 		this.cells.push(cell); // Flattened array of all cells
-		// 		const error = newRow.append(cell);
-		// 		if(!this.error && error) {
-		// 			this.error = true;
-		// 		}
-		// 	});
-		// 	return newRow;
-		// });
 		this.columns = [[], []];
 		for (let i = 0; i < boardSize; i++) { // Create columns from rows of cells
 			const newColumn = new Column();
@@ -116,8 +93,6 @@ class SodokuPlayer {
 			} else { // If no updater is given, return status update instead
 				return "Invalid Sodoku Board";
 			}
-		} else if(onStatusUpdate) {
-			onStatusUpdate(EDITSTATUS);
 		}
 	}
 	getCells = () => this.cells;

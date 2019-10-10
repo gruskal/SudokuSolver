@@ -5,10 +5,8 @@ import styled from "styled-components";
 const Container = styled.div`
   display: flex;
   flex: 1 1 auto;
-  flex-direction: column;
   align-content: center;
   justify-content: center;
-  background-color: #83878C;
 `;
 
 /* Component */

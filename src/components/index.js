@@ -1,4 +1,3 @@
-export { default as Buoy } from "./Buoy";
-export { default as CircleButton } from "./CircleButton";
 export { default as SudokuPlayer } from "./SudokuPlayer";
-export { default as SudokuViewer } from "./SudokuViewer";
+export { default as SidebarAction } from "./SidebarAction";
+export { default as SudokuBoard } from "./SudokuBoard/SudokuBoard";

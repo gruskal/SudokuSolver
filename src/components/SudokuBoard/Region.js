@@ -1,6 +1,5 @@
 import * as React from "react";
 import styled from "styled-components";
-import Cell from "./Cell"
 
 const CONSTANTS = {
     rowLength: 3
@@ -10,17 +9,19 @@ const CONSTANTS = {
 const Container = styled.div`
   display: flex;
   flex-wrap: wrap;
-  width: 150px;
-  height: 150px;
-  border: 2px solid red;
+  flex-basis: 33.3333%
+  border: 2px solid #4B4B4A;
+  box-sizing: border-box;
+  max-height: ${({maxRegionHeight}) => maxRegionHeight};
 `;
 
 /* Component */
 const Region = ({
-  children
+    maxRegionHeight,
+    children
 }) => {
     return (
-        <Container>
+        <Container maxRegionHeight={maxRegionHeight}>
             {children}
         </Container>
     );
