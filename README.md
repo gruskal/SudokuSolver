@@ -1,9 +1,7 @@
 # SudokuSolver
 Solves sudoku puzzles with various solving options: Step by step, animated solve, quick solve
-- Step by step: click to iterate through the solution step by step
-- Animated solve: automatically iterates through the solution
-- Quick solve: solves without updating the displayed board - Significantly faster
-#### You can also edit the board to solve a different puzzle by clicking the edit button
+
+#### README: If you're testing mobile using browser devtools make sure to refresh the page, otherwise the grid will not scale properly
   
 ## Prerequisites:
   - nodejs (https://nodejs.org/en/)
@@ -15,12 +13,11 @@ Solves sudoku puzzles with various solving options: Step by step, animated solve
   #### Deploy
   3) Run "npm start"
   #### Access
-  4) Navigate to localhost:3000 using your favourite popular browser (Chrome, Firefox, Safari, Edge)
+  4) Navigate to localhost:3000 using your favourite popular browser (Chrome, Safari, Edge)
+  Note: Grid does not render properly in Firefox and therefore should not be used.
   
 ## If I had more time I would:
-  - Add better support for mobile devices (Tall & narrow screens do not display optimally)
-  - Make CircleButton and Buoy inherit from a common parent
-  - Use a better solution for editing Sodoku boards
-  - Improve styling / ux (Allow for creating boards of any size, set animated solve speed)
-  - Refactor: Separate and share much of the logic between quickSolve and solveNextStep in SodokuPlayer.js
+  - Make the grid render properly in Firefox
+  - Fix the bug where a cell will at times be blank after solving a puzzle, this is due to it not re-rendering. This happens because the new value is the same as the old value stored in props. The reason it's displayed as blank is because it is a blank value in the cells state.
+  - Fix imports in the worker
   
